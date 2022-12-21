@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User, Prisma } from '@prisma/client';
 
@@ -10,9 +10,13 @@ export class UsersService {
     }
 
     async getUser(id: number): Promise<User | null> {
-      return await this.prisma.user.findUnique(
-        { where: { id: Number(id) } }
+      const usuario = await this.prisma.user.findUnique(
+        { where: { id: Number(id) }, include: { Message: true, chats: true }}
       );
+      if (!usuario) {
+        throw new NotFoundException('Usuário com id ' + id + ' não encontrado')
+      }
+      return usuario;
     }
 
     async createUser(data: User): Promise<User> {
@@ -33,10 +37,11 @@ export class UsersService {
     }
 
     async deleteUser(id: number): Promise<User> {
+      await this.prisma.message.deleteMany({
+        where: { userId: Number(id) },
+      });
       return await this.prisma.user.delete({
         where: { id: Number(id) },
       });
     }
-
-
 }
