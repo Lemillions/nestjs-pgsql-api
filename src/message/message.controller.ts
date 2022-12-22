@@ -17,6 +17,11 @@ export class MessagesController {
   async getAllMessages(): Promise<Message[]> {
     return this.messagesService.getAllMessages();
   }
+  
+  @Get('chat/:id')
+  async getMessageByChat(@Param('id') id: number): Promise<Message[]> {
+    return this.messagesService.getMessageByChat(id);
+  }
 
   @Get(':id')
   async getMessage(@Param('id') id: number): Promise<Message | null> {
