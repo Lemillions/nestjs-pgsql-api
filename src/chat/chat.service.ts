@@ -4,24 +4,38 @@ import { Chat, Prisma } from '@prisma/client';
 
 @Injectable()
 export class ChatsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
   async getAllChats(): Promise<Chat[]> {
     return await this.prisma.chat.findMany();
   }
-  
+
   async getChat(id: number): Promise<Chat | null> {
-    const chat = await this.prisma.chat.findUnique(
-      { where: { id: Number(id) }, include: { message: true, users: true}}
-    );
+    const chat = await this.prisma.chat.findUnique({
+      where: { id: Number(id) },
+      include: { message: true, users: true },
+    });
     if (!chat) {
-      throw new NotFoundException('Chat com id ' + id + ' não encontrado')
+      throw new NotFoundException('Chat com id ' + id + ' não encontrado');
     }
     return chat;
   }
 
-  async createChat(data: Chat): Promise<Chat> {
+  async createChat(data: any): Promise<Chat> {
     return await this.prisma.chat.create({
-      data,
+      data: {
+        name: data.name,
+        image: data.image,
+        users: {
+          create: {
+            permissao: 'ADMIN',
+            user: {
+              connect: {
+                id: data.userID
+              },
+            }
+          }
+        },
+      },
     });
   }
 
@@ -52,26 +66,30 @@ export class ChatsService {
     const { id, user } = params;
     return await this.prisma.chat.update({
       data: {
-        
+        users: {
+          create: {
+            user: {
+              connect: {
+                id: user.id,
+              }
+            }
+          }
+        }
       },
-      where: { 
-        id: Number(id) 
+      where: {
+        id: Number(id),
       },
     });
   }
-  
+
   async removeMember(params: {
     id: number;
     user: { id: number };
   }): Promise<Chat> {
     const { id, user } = params;
     return await this.prisma.chat.update({
-      data:{
-        
-      },
+      data: {},
       where: { id: Number(id) },
     });
   }
-
-
 }
