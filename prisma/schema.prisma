@@ -11,15 +11,32 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
+  id        Int           @id @default(autoincrement())
+  email     String        @unique
   name      String?
   image     String?
   password  String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  message   Message[]
+  chats     UserInChats[]
+}
+
+model UserInChats {
+  permissao Permissao @default(MEMBER)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  chat      Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId    Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  Message   Message[]
-  chats     Chat[]
+  
+  @@id([userId, chatId])
+}
+
+enum Permissao {
+  ADMIN
+  MEMBER
 }
 
 model Message {
@@ -34,12 +51,11 @@ model Message {
 }
 
 model Chat {
-  id        Int      @id @default(autoincrement())
+  id        Int           @id @default(autoincrement())
   name      String
   image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Message   Message[]
-  members   User[]  
-  
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  message   Message[]
+  users     UserInChats[]
 }

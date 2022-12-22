@@ -11,7 +11,7 @@ export class UsersService {
 
     async getUser(id: number): Promise<User | null> {
       const usuario = await this.prisma.user.findUnique(
-        { where: { id: Number(id) }, include: { Message: true, chats: true }}
+        { where: { id: Number(id) }, include: { message: true, chats: true }}
       );
       if (!usuario) {
         throw new NotFoundException('Usuário com id ' + id + ' não encontrado')

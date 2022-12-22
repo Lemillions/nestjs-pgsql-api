@@ -11,7 +11,7 @@ export class ChatsService {
   
   async getChat(id: number): Promise<Chat | null> {
     const chat = await this.prisma.chat.findUnique(
-      { where: { id: Number(id) }, include: { Message: true, members: true }}
+      { where: { id: Number(id) }, include: { message: true, users: true}}
     );
     if (!chat) {
       throw new NotFoundException('Chat com id ' + id + ' não encontrado')
@@ -52,13 +52,11 @@ export class ChatsService {
     const { id, user } = params;
     return await this.prisma.chat.update({
       data: {
-        members: {
-          connect: {
-            id: Number(user.id)
-          }
-        }
+        
       },
-      where: { id: Number(id) },
+      where: { 
+        id: Number(id) 
+      },
     });
   }
   
@@ -68,12 +66,8 @@ export class ChatsService {
   }): Promise<Chat> {
     const { id, user } = params;
     return await this.prisma.chat.update({
-      data: {
-        members: {
-          disconnect: {
-            id: Number(user.id)
-          }
-        }
+      data:{
+        
       },
       where: { id: Number(id) },
     });
