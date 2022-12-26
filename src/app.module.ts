@@ -9,11 +9,12 @@ import { MessagesService } from './message/message.service';
 import { ChatModule } from './chat/chat.module';
 import { ChatsController } from './chat/chat.controller';
 import { ChatsService } from './chat/chat.service';
+import { AppGateway } from './app/app.gateway';
 
 
 @Module({
   imports: [PrismaModule, UsersModule, MessagesModule, ChatModule],
   controllers: [UsersController, MessagesController, ChatsController],
-  providers: [UsersService, MessagesService, ChatsService],
+  providers: [UsersService, MessagesService, ChatsService, AppGateway],
 })
 export class AppModule {}

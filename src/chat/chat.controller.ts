@@ -23,6 +23,11 @@ export class ChatsController {
     return this.chatsService.getChat(id);
   }
 
+  @Get('user/:email')
+  async getChatByUser(@Param('email') email: string): Promise<Chat[]> {
+    return this.chatsService.getChatByUser(email);
+  }
+
   @Post()
   async createChat(@Body() data: Chat): Promise<Chat> {
     return this.chatsService.createChat(data);
@@ -34,9 +39,9 @@ export class ChatsController {
   }
 
   @Delete(':id')
-  async deleteChat(@Param('id') id: number): Promise<Chat> {
+  async deleteChat(@Param('id') name: string): Promise<Chat> {
     
-    return this.chatsService.deleteChat(id);
+    return this.chatsService.deleteChat(name);
   }
 
   @Put(':id/newmember')
@@ -44,9 +49,9 @@ export class ChatsController {
     return this.chatsService.addNewMember({ id, user });
   }
 
-  @Put(':id/removemember')
-  async removeMembers(@Param('id') id: number, @Body() user: { id:number }): Promise<Chat> {
-    return this.chatsService.removeMember({ id, user });
+  @Put(':name/removemember')
+  async removeMembers(@Param('name') name:string, @Body() user: { email:string }): Promise<Chat> {
+    return this.chatsService.removeMember({ name, user });
   }
 
 }

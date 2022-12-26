@@ -19,9 +19,9 @@ export class MessagesService {
     return mensagem;
   }
 
-  async getMessageByChat(id: number): Promise<Message[]> {
+  async getMessageByChat(name:string): Promise<Message[]> {
     return await this.prisma.message.findMany({
-      where: { chatId: Number(id) },
+      where: { chatName: name },
     });
   }
 

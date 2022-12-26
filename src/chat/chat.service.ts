@@ -4,7 +4,7 @@ import { Chat, Prisma } from '@prisma/client';
 
 @Injectable()
 export class ChatsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
   async getAllChats(): Promise<Chat[]> {
     return await this.prisma.chat.findMany();
   }
@@ -18,6 +18,30 @@ export class ChatsService {
       throw new NotFoundException('Chat com id ' + id + ' não encontrado');
     }
     return chat;
+  }
+
+  async getChatByUser(email: string): Promise<Chat[]> {
+    console.log(email);
+    return await this.prisma.chat.findMany({
+      where: {
+        users: {
+          some: {
+            userEmail: email
+          }
+        }
+      },
+      include: {
+        message: {
+          include: {
+            user: true,
+          }
+        }, users: {
+          include: {
+            user: true,
+          }
+        }
+      },
+    });
   }
 
   async createChat(data: any): Promise<Chat> {
@@ -50,12 +74,12 @@ export class ChatsService {
     });
   }
 
-  async deleteChat(id: number): Promise<Chat> {
+  async deleteChat(name: string): Promise<Chat> {
     await this.prisma.message.deleteMany({
-      where: { chatId: Number(id) },
+      where: { chatName: name },
     });
     return await this.prisma.chat.delete({
-      where: { id: Number(id) },
+      where: { name: name },
     });
   }
 
@@ -83,13 +107,22 @@ export class ChatsService {
   }
 
   async removeMember(params: {
-    id: number;
-    user: { id: number };
+    name: string;
+    user: { email: string };
   }): Promise<Chat> {
-    const { id, user } = params;
+    const { name, user } = params;
     return await this.prisma.chat.update({
-      data: {},
-      where: { id: Number(id) },
+      data: {
+        users: {
+          delete: {
+            userEmail_chatName:{
+              userEmail: user.email,
+              chatName: name
+            }
+          }
+        }
+      },
+      where: { name: name },
     });
   }
 }

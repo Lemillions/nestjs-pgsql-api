@@ -6,22 +6,24 @@ const prisma = new PrismaClient();
 async function main() {
   // create two dummy articles
   const user1 = await prisma.user.upsert({
-    where: { email: "mvsatnso2003@gmail.com"},
+    where: { email: "mvsatnso2003@gmail.com" },
     update: {},
     create: {
       email: 'mvsantos2003@gmail.com',
       name: "Marcos",
       password: "123456",
+      image: "https://pbs.twimg.com/media/FaZ0Rs5WIAAlIiy.jpg",
     },
   });
 
   const user2 = await prisma.user.upsert({
-    where: { email: "marcosvsdxd@gmail.com"},
+    where: { email: "marcosvsdxd@gmail.com" },
     update: {},
     create: {
       email: "marcosvsdxd@gmail.com",
       name: "Marcos Vinicius",
       password: "123456",
+      image: "https://pbs.twimg.com/media/FaZ0Rs5WIAAlIiy.jpg",
     },
   });
 
@@ -32,10 +34,10 @@ async function main() {
 }
 
 main()
-    .catch((e) => {
-      throw e;
-    }
-    )
-    .finally(async () => {
-      await prisma.$disconnect();
-    });
+  .catch((e) => {
+    throw e;
+  }
+  )
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
